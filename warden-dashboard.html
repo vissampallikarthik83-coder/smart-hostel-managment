@@ -1,0 +1,555 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Warden Central | HostelX</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0a0a0c;
+            --bg-card: rgba(255, 255, 255, 0.04);
+            --accent-purple: #BB86FC;
+            --accent-teal: #03DAC6;
+            --error-red: #CF6679;
+            --text-primary: #e5e7eb;
+            --text-secondary: #9ca3af;
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-primary);
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            overflow-x: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .font-orbitron { font-family: 'Orbitron', sans-serif; }
+
+        /* Cyberpunk Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-dark); }
+        ::-webkit-scrollbar-thumb { background: var(--accent-purple); border-radius: 4px; }
+
+        /* Glassmorphism Cards */
+        .cyber-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .cyber-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent-purple);
+            box-shadow: 0 0 20px rgba(187, 134, 252, 0.1);
+        }
+
+        /* Neon Glows */
+        .neon-text-purple { color: var(--accent-purple); text-shadow: 0 0 8px rgba(187, 134, 252, 0.5); }
+        .neon-border-purple { border-color: var(--accent-purple) !ab !important; }
+
+        /* Custom Buttons */
+        .btn-cyber {
+            background: transparent;
+            border: 1px solid var(--accent-purple);
+            color: var(--accent-purple);
+            border-radius: 0.75rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 0.75rem 1.5rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-cyber:hover {
+            background: var(--accent-purple);
+            color: var(--bg-dark);
+            box-shadow: 0 0 15px var(--accent-purple);
+        }
+        .btn-cyber-teal {
+            border-color: var(--accent-teal);
+            color: var(--accent-teal);
+        }
+        .btn-cyber-teal:hover {
+            background: var(--accent-teal);
+            color: var(--bg-dark);
+            box-shadow: 0 0 15px var(--accent-teal);
+        }
+
+        /* Dashboard Layout */
+        #sidebar {
+            width: 280px;
+            height: 100vh;
+            position: fixed;
+            background: rgba(13, 13, 16, 0.9);
+            border-right: 1px solid var(--glass-border);
+            z-index: 1000;
+        }
+        #main-content {
+            margin-left: 280px;
+            padding: 2rem;
+            min-height: 100vh;
+        }
+
+        .stat-badge {
+            font-size: 2.5rem;
+            font-weight: 900;
+            font-family: 'Orbitron', sans-serif;
+            display: block;
+        }
+
+        /* Table Customization */
+        .table { color: var(--text-primary); }
+        .table thead th { border-bottom: 2px solid var(--glass-border); color: var(--text-secondary); text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px; }
+        .table tbody td { border-bottom: 1px solid var(--glass-border); vertical-align: middle; padding: 1rem 0.5rem; }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade { animation: fadeIn 0.6s ease-out forwards; }
+
+        .loading-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg-dark);
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .img-thumb {
+            width: 50px; height: 50px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 1px solid var(--glass-border);
+            cursor: pointer;
+        }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            #sidebar { display: none; }
+            #main-content { margin-left: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Loading Screen -->
+    <div id="loading" class="loading-overlay">
+        <div class="text-center">
+            <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status"></div>
+            <p class="mt-3 font-orbitron neon-text-purple tracking-widest">AUTH_VERIFYING...</p>
+        </div>
+    </div>
+
+    <!-- Sidebar -->
+    <div id="sidebar" class="d-flex flex-column p-4">
+        <div class="mb-5">
+            <h1 class="font-orbitron fw-black fs-3 m-0">HOSTEL<span class="neon-text-purple">X</span></h1>
+            <small class="text-secondary tracking-widest uppercase">Warden Protocol v1.0</small>
+        </div>
+        
+        <nav class="nav flex-column gap-3">
+            <a class="nav-link text-white bg-white bg-opacity-10 rounded p-3" href="#"><i class="fas fa-th-large me-3"></i>Dashboard</a>
+            <a class="nav-link text-secondary p-3" href="#complaints-section"><i class="fas fa-exclamation-triangle me-3"></i>Complaints</a>
+            <a class="nav-link text-secondary p-3" href="#leaves-section"><i class="fas fa-plane-departure me-3"></i>Leave Approvals</a>
+            <a class="nav-link text-secondary p-3" href="#announcements-section"><i class="fas fa-bullhorn me-3"></i>Announcements</a>
+        </nav>
+
+        <div class="mt-auto">
+            <button onclick="logout()" class="btn btn-outline-danger w-100 rounded-pill py-2"><i class="fas fa-sign-out-alt me-2"></i>Terminate Session</button>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div id="main-content">
+        <header class="d-flex justify-content-between align-items-center mb-5 animate-fade">
+            <div>
+                <h2 class="font-orbitron fw-bold m-0 uppercase">Warden <span class="neon-text-purple">Command Hub</span></h2>
+                <p class="text-secondary m-0" id="warden-name-display">Active User: Authenticating...</p>
+            </div>
+            <div class="d-flex gap-3">
+                <button class="btn btn-cyber" data-bs-toggle="modal" data-bs-target="#otpModal"><i class="fas fa-key me-2"></i>Gen OTP</button>
+                <button class="btn btn-cyber btn-cyber-teal" data-bs-toggle="modal" data-bs-target="#announceModal"><i class="fas fa-plus me-2"></i>BroadCast</button>
+            </div>
+        </header>
+
+        <!-- Stats Grid -->
+        <div class="row g-4 mb-5 animate-fade" style="animation-delay: 0.1s;">
+            <div class="col-md-4">
+                <div class="cyber-card">
+                    <p class="text-secondary uppercase tracking-widest small font-bold">Pending Grievances</p>
+                    <span class="stat-badge neon-text-purple" id="pending-complaints-count">0</span>
+                    <div class="progress mt-3 bg-dark" style="height: 4px;">
+                        <div class="progress-bar bg-primary" id="complaints-progress" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="cyber-card">
+                    <p class="text-secondary uppercase tracking-widest small font-bold">Unprocessed Leaves</p>
+                    <span class="stat-badge text-warning" id="pending-leaves-count">0</span>
+                    <div class="progress mt-3 bg-dark" style="height: 4px;">
+                        <div class="progress-bar bg-warning" id="leaves-progress" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="cyber-card">
+                    <p class="text-secondary uppercase tracking-widest small font-bold">Global Broadcasts</p>
+                    <span class="stat-badge text-info" id="announcement-count">0</span>
+                    <div class="progress mt-3 bg-dark" style="height: 4px;">
+                        <div class="progress-bar bg-info" style="width: 100%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Complaints Section -->
+        <div id="complaints-section" class="mb-5 animate-fade" style="animation-delay: 0.2s;">
+            <div class="cyber-card">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h4 class="font-orbitron m-0"><i class="fas fa-clipboard-list me-3 text-primary"></i>Grievance <span class="text-primary">Registry</span></h4>
+                    <span class="badge bg-primary rounded-pill px-3 py-2">LIVE FEED</span>
+                </div>
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Student</th>
+                                <th>Incident Details</th>
+                                <th>Priority</th>
+                                <th>Proof</th>
+                                <th>Status</th>
+                                <th class="text-end">Protocol</th>
+                            </tr>
+                        </thead>
+                        <tbody id="complaints-list">
+                            <!-- JS Injection -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Leaves Section -->
+        <div id="leaves-section" class="mb-5 animate-fade" style="animation-delay: 0.3s;">
+            <div class="cyber-card border-warning border-opacity-25">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h4 class="font-orbitron m-0"><i class="fas fa-plane-departure me-3 text-warning"></i>Departure <span class="text-warning">Authorization</span></h4>
+                    <span class="badge bg-warning text-dark rounded-pill px-3 py-2">PENDING_REVIEW</span>
+                </div>
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Student</th>
+                                <th>Timeline</th>
+                                <th>Justification</th>
+                                <th>Status</th>
+                                <th class="text-end">Authorization</th>
+                            </tr>
+                        </thead>
+                        <tbody id="leaves-list">
+                            <!-- JS Injection -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Announcements Section -->
+        <div id="announcements-section" class="animate-fade" style="animation-delay: 0.4s;">
+            <div class="cyber-card border-info border-opacity-25">
+                <h4 class="font-orbitron mb-4"><i class="fas fa-history me-3 text-info"></i>Transmission <span class="text-info">History</span></h4>
+                <div id="recent-announcements" class="list-group list-group-flush bg-transparent">
+                    <!-- JS Injection -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- OTP Modal -->
+    <div class="modal fade" id="otpModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content bg-dark border-primary">
+                <div class="modal-body p-5 text-center">
+                    <h4 class="font-orbitron text-primary mb-4">GENERATE EXIT_CODE</h4>
+                    <div class="mb-4">
+                        <input type="text" id="otpStudentId" class="form-control bg-black border-secondary text-white p-3 mb-3" placeholder="Enter Student HX-ID">
+                    </div>
+                    <div id="otpDisplay" class="d-none mb-4">
+                        <p class="text-secondary small uppercase tracking-widest mb-1">Generated Signature</p>
+                        <h1 class="font-orbitron display-3 text-white fw-black" id="otpCode">000000</h1>
+                        <button class="btn btn-sm btn-outline-info mt-3" onclick="copyOTP()"><i class="fas fa-copy me-2"></i>Copy to Buffer</button>
+                    </div>
+                    <button class="btn btn-cyber w-100" id="genOtpBtn" onclick="handleOTPGeneration()">Execute Generation</button>
+                    <button class="btn btn-link text-secondary mt-3" data-bs-dismiss="modal">Abort</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Announcement Modal -->
+    <div class="modal fade" id="announceModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content bg-dark border-info">
+                <div class="modal-body p-5">
+                    <h4 class="font-orbitron text-info mb-4">GLOBAL BROADCAST</h4>
+                    <div class="mb-3">
+                        <label class="text-secondary small uppercase mb-1">Subject Header</label>
+                        <input type="text" id="announceTitle" class="form-control bg-black border-secondary text-white p-3" placeholder="Enter title...">
+                    </div>
+                    <div class="mb-4">
+                        <label class="text-secondary small uppercase mb-1">Message Payload</label>
+                        <textarea id="announceBody" rows="4" class="form-control bg-black border-secondary text-white p-3" placeholder="Transmission details..."></textarea>
+                    </div>
+                    <button class="btn btn-cyber btn-cyber-teal w-100" onclick="handleAnnouncement()">Transmit Now</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK (Modular) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, updateDoc, doc, onSnapshot, query, where, orderBy, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        // 🔥 FIREBASE CONFIG (Add your real config here)
+        const firebaseConfig = {
+            apiKey: "AIzaSy...",
+            authDomain: "hostelx-techsprint.firebaseapp.com",
+            projectId: "hostelx-techsprint",
+            storageBucket: "hostelx-techsprint.appspot.com",
+            messagingSenderId: "123456789",
+            appId: "1:123456789:web:abcdef"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        let currentWarden = null;
+
+        // AUTH CHECK & ROLE VERIFICATION
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                // In real app, we fetch role from /users/{uid}
+                // Mocking role verification for demo
+                const isWarden = true; // Replace with: const isWarden = (await getRole(user.uid)) === 'warden';
+                
+                if (isWarden) {
+                    currentWarden = user;
+                    document.getElementById('warden-name-display').innerText = `Active User: Warden ${user.displayName || user.email}`;
+                    document.getElementById('loading').style.display = 'none';
+                    initRealtimeListeners();
+                } else {
+                    alert('ACCESS_DENIED: Warden clearance required.');
+                    window.location.href = 'index.html';
+                }
+            } else {
+                // Not logged in
+                // window.location.href = 'index.html';
+                // For demo, we auto-bypass after 1s if no real firebase set up
+                setTimeout(() => {
+                    document.getElementById('loading').style.display = 'none';
+                    document.getElementById('warden-name-display').innerText = `Active User: Warden [DEMO_MODE]`;
+                    mockInitialData();
+                }, 1000);
+            }
+        });
+
+        // LOGOUT
+        window.logout = async () => {
+            await signOut(auth);
+            window.location.href = 'index.html';
+        };
+
+        // REALTIME LISTENERS
+        function initRealtimeListeners() {
+            // Listen for Complaints
+            onSnapshot(query(collection(db, "complaints"), orderBy("timestamp", "desc")), (snapshot) => {
+                const list = document.getElementById('complaints-list');
+                list.innerHTML = '';
+                let pendingCount = 0;
+                
+                snapshot.forEach((docSnap) => {
+                    const data = docSnap.data();
+                    if (data.status === 'Pending') pendingCount++;
+                    renderComplaintRow(docSnap.id, data);
+                });
+                
+                document.getElementById('pending-complaints-count').innerText = pendingCount;
+                const total = snapshot.size || 1;
+                document.getElementById('complaints-progress').style.width = `${((total - pendingCount)/total)*100}%`;
+            });
+
+            // Listen for Leaves
+            onSnapshot(query(collection(db, "leaves"), where("status", "==", "Pending")), (snapshot) => {
+                const list = document.getElementById('leaves-list');
+                list.innerHTML = '';
+                document.getElementById('pending-leaves-count').innerText = snapshot.size;
+                
+                snapshot.forEach((docSnap) => {
+                    renderLeaveRow(docSnap.id, docSnap.data());
+                });
+            });
+
+            // Listen for Announcements
+            onSnapshot(query(collection(db, "announcements"), orderBy("timestamp", "desc")), (snapshot) => {
+                const list = document.getElementById('recent-announcements');
+                list.innerHTML = '';
+                document.getElementById('announcement-count').innerText = snapshot.size;
+                
+                snapshot.forEach((docSnap) => {
+                    renderAnnouncementItem(docSnap.data());
+                });
+            });
+        }
+
+        // RENDERING LOGIC
+        function renderComplaintRow(id, data) {
+            const list = document.getElementById('complaints-list');
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td><span class="fw-bold">${data.studentName}</span><br><small class="text-secondary">${data.studentId}</small></td>
+                <td><p class="mb-0 small">${data.description}</p></td>
+                <td><span class="badge ${data.priority === 'High' ? 'bg-danger' : 'bg-info'} opacity-75">${data.priority}</span></td>
+                <td><img src="${data.imageUrl || 'https://via.placeholder.com/150/121212/BB86FC?text=PROOF'}" class="img-thumb" onclick="window.open(this.src)"></td>
+                <td><span class="text-${data.status === 'Resolved' ? 'success' : 'warning'} small uppercase font-bold">${data.status}</span></td>
+                <td class="text-end">
+                    ${data.status === 'Pending' ? `<button class="btn btn-sm btn-cyber-teal py-1" onclick="resolveComplaint('${id}')">Resolve</button>` : `<i class="fas fa-check-circle text-success"></i>`}
+                </td>
+            `;
+            list.appendChild(row);
+        }
+
+        function renderLeaveRow(id, data) {
+            const list = document.getElementById('leaves-list');
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td><span class="fw-bold">${data.studentName}</span></td>
+                <td><small>${data.fromDate} → ${data.toDate}</small></td>
+                <td class="small opacity-75">${data.reason}</td>
+                <td><span class="text-warning small font-bold">${data.status}</span></td>
+                <td class="text-end">
+                    <button class="btn btn-sm btn-cyber-teal py-1 px-3 me-2" onclick="handleLeaveStatus('${id}', 'Approved')">Approve</button>
+                    <button class="btn btn-sm btn-outline-danger py-1" onclick="handleLeaveStatus('${id}', 'Rejected')">Reject</button>
+                </td>
+            `;
+            list.appendChild(row);
+        }
+
+        function renderAnnouncementItem(data) {
+            const list = document.getElementById('recent-announcements');
+            const item = document.createElement('div');
+            item.className = 'list-group-item bg-transparent text-white border-glass py-4 px-0';
+            item.innerHTML = `
+                <div class="d-flex justify-content-between">
+                    <h6 class="text-info fw-bold mb-1">${data.title}</h6>
+                    <small class="text-secondary font-mono">${new Date(data.timestamp).toLocaleDateString()}</small>
+                </div>
+                <p class="small text-secondary mb-0">${data.body}</p>
+                <small class="text-info opacity-50 mt-2 d-block">By: ${data.author}</small>
+            `;
+            list.appendChild(item);
+        }
+
+        // ACTIONS
+        window.resolveComplaint = async (id) => {
+            if (confirm('Verify resolution of this incident protocol?')) {
+                try {
+                    await updateDoc(doc(db, "complaints", id), { status: "Resolved" });
+                } catch (e) { console.error("Update failed", e); }
+            }
+        };
+
+        window.handleLeaveStatus = async (id, status) => {
+            if (confirm(`Confirm ${status} action?`)) {
+                try {
+                    await updateDoc(doc(db, "leaves", id), { status: status });
+                } catch (e) { console.error("Status update failed", e); }
+            }
+        };
+
+        window.handleAnnouncement = async () => {
+            const title = document.getElementById('announceTitle').value;
+            const body = document.getElementById('announceBody').value;
+            if (!title || !body) return alert("Missing Payload Fields");
+
+            try {
+                await addDoc(collection(db, "announcements"), {
+                    title, body, 
+                    author: currentWarden ? (currentWarden.displayName || currentWarden.email) : "Warden Admin",
+                    timestamp: Date.now()
+                });
+                bootstrap.Modal.getInstance(document.getElementById('announceModal')).hide();
+                document.getElementById('announceTitle').value = '';
+                document.getElementById('announceBody').value = '';
+            } catch (e) { console.error("Post failed", e); }
+        };
+
+        window.handleOTPGeneration = () => {
+            const id = document.getElementById('otpStudentId').value;
+            if (!id) return alert("Target ID Required");
+            
+            const otp = Math.floor(100000 + Math.random() * 900000);
+            document.getElementById('otpCode').innerText = otp;
+            document.getElementById('otpDisplay').classList.remove('d-none');
+            document.getElementById('genOtpBtn').classList.add('d-none');
+            
+            // Persist locally for demo
+            localStorage.setItem('LAST_OTP', otp);
+        };
+
+        window.copyOTP = () => {
+            const otp = document.getElementById('otpCode').innerText;
+            navigator.clipboard.writeText(otp);
+            alert("Signature copied to buffer.");
+        };
+
+        // MOCK DATA FOR OFFLINE DEMO
+        function mockInitialData() {
+            const complaints = [
+                { studentName: "Vissampalli Karthik", studentId: "HX-2025-01", description: "Ceiling fan motor failure in Room 402B.", priority: "High", status: "Pending", timestamp: Date.now() },
+                { studentName: "Rohan Das", studentId: "HX-2025-15", description: "Water leakage in common bathroom floor 3.", priority: "Medium", status: "Resolved", timestamp: Date.now() - 86400000 }
+            ];
+            const leaves = [
+                { studentName: "Ananya S.", fromDate: "2025-05-10", toDate: "2025-05-15", reason: "Family Wedding Ceremony", status: "Pending" }
+            ];
+            const announcements = [
+                { title: "Water Supply Notice", body: "Suspension from 10 AM to 2 PM for cleaning.", author: "Admin Office", timestamp: Date.now() - 3600000 }
+            ];
+
+            // Render mocks
+            complaints.forEach(c => renderComplaintRow('mock' + Math.random(), c));
+            leaves.forEach(l => renderLeaveRow('mock' + Math.random(), l));
+            announcements.forEach(a => renderAnnouncementItem(a));
+
+            document.getElementById('pending-complaints-count').innerText = complaints.filter(c => c.status === 'Pending').length;
+            document.getElementById('pending-leaves-count').innerText = leaves.length;
+            document.getElementById('announcement-count').innerText = announcements.length;
+        }
+    </script>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
