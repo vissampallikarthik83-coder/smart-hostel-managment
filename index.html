@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HostelX | TEAM TITANS</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet">
+  <script>
+    window.tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            // Semantic Colors
+            'app-main': 'var(--bg-primary)',
+            'app-side': 'var(--bg-secondary)',
+            'app-tertiary': 'var(--bg-tertiary)',
+
+            'text-main': 'var(--text-primary)',
+            'text-secondary': 'var(--text-secondary)',
+            'text-muted': 'var(--text-muted)',
+
+            'card-bg': 'var(--surface-card)',
+            'card-inner': 'var(--surface-elevated)',
+            'card-overlay': 'var(--surface-overlay)',
+
+            'border-app': 'var(--border-subtle)',
+            'border-strong': 'var(--border-strong)',
+
+            'header-glass': 'var(--header-bg)',
+
+            // Accents
+            'brand-primary': 'var(--accent-primary)',
+            'brand-secondary': 'var(--accent-secondary)',
+          }
+        }
+      }
+    }
+
+    window.addEventListener('error', function (e) {
+      console.error('HostelX Runtime Error:', e.message);
+    });
+    window.addEventListener('unhandledrejection', function (e) {
+      console.error('HostelX Promise Failure:', e.reason);
+    });
+  </script>
+  <link rel="stylesheet" href="/src/index.css">
+</head>
+
+<body>
+  <div id="root"></div>
+  <script type="module" src="/src/index.tsx"></script>
+</body>
+
+</html>

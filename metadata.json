@@ -1,0 +1,7 @@
+{
+  "name": "HostelX - holistic hostel managment",
+  "description": "A comprehensive dark-cyberpunk themed digital management system for modern hostels, featuring AI-powered complaint analysis, OTP gate security, and advanced analytics.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}

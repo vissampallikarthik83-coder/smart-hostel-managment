@@ -1,0 +1,122 @@
+:root {
+  /* Dark Mode (Default) - "Deep Space" Aesthetic */
+  --bg-primary: #0b0f19;
+  /* Very deep blue-black */
+  --bg-secondary: #0f172a;
+  /* Slate 900 */
+  --bg-tertiary: #1e293b;
+  /* Slate 800 */
+
+  --text-primary: #f1f5f9;
+  /* Slate 100 */
+  --text-secondary: #cbd5e1;
+  /* Slate 300 */
+  --text-muted: #64748b;
+  /* Slate 500 */
+
+  --surface-card: rgba(30, 41, 59, 0.7);
+  --surface-overlay: rgba(15, 23, 42, 0.8);
+  --surface-elevated: #1e293b;
+
+  --border-subtle: rgba(148, 163, 184, 0.1);
+  --border-strong: rgba(148, 163, 184, 0.2);
+
+  --accent-primary: #0ea5e9;
+  /* Sky 500 */
+  --accent-secondary: #8b5cf6;
+  /* Violet 500 */
+  --accent-success: #10b981;
+  /* Emerald 500 */
+  --accent-warning: #f59e0b;
+  /* Amber 500 */
+  --accent-danger: #ef4444;
+  /* Red 500 */
+
+  --header-bg: rgba(11, 15, 25, 0.8);
+}
+
+body.light-mode {
+  /* Light Mode - "Clean Tech" Aesthetic */
+  --bg-primary: #f0f4f8;
+  /* Blue-grey tint white */
+  --bg-secondary: #ffffff;
+  /* Pure white */
+  --bg-tertiary: #f1f5f9;
+  /* Slate 100 */
+
+  --text-primary: #0f172a;
+  /* Slate 900 */
+  --text-secondary: #334155;
+  /* Slate 700 */
+  --text-muted: #64748b;
+  /* Slate 500 */
+
+  --surface-card: rgba(255, 255, 255, 0.9);
+  --surface-overlay: rgba(255, 255, 255, 0.95);
+  --surface-elevated: #ffffff;
+
+  --border-subtle: rgba(148, 163, 184, 0.2);
+  --border-strong: rgba(148, 163, 184, 0.3);
+
+  --header-bg: rgba(240, 244, 248, 0.9);
+}
+
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: 'Inter', sans-serif;
+  overflow-x: hidden;
+  min-height: 100vh;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.font-orbitron {
+  font-family: 'Orbitron', sans-serif;
+}
+
+.cyber-card {
+  background: var(--surface-card);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--border-subtle);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.light-mode .cyber-card {
+  background: var(--surface-card);
+  box-shadow: 0 10px 15px -3px rgba(148, 163, 184, 0.1), 0 4px 6px -2px rgba(148, 163, 184, 0.05);
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
